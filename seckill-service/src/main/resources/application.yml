@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: seckill-service
+  profiles:
+    active: dev
+  config:
+    import: nacos:seckill-service-dev.yml
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        group: DEV_GROUP
+        namespace: dev
