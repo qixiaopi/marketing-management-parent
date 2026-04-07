@@ -1,0 +1,100 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.qixiaopi.management</groupId>
+  <artifactId>marketing-management-parent</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <name>marketing-management-parent</name>
+  <description>营销管理系统微服务父工程</description>
+    <!-- 父工程：Spring Boot 统一版本管理 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/>
+    </parent>
+     <!-- 统一属性配置 -->
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <redisson.version>3.25.0</redisson.version>
+        <rocketmq.version>2.3.0</rocketmq.version>
+        <alibaba-cloud.version>2023.0.1.0</alibaba-cloud.version>
+        <mybatis.plus.version>3.5.9</mybatis.plus.version>
+        <mysql.version>8.0.33</mysql.version>
+        <dynamic.datasource.version>4.1.3</dynamic.datasource.version>
+        <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <hessian.version>4.0.63</hessian.version>
+    </properties>
+     <!-- 依赖版本统一管理 -->
+    <dependencyManagement>
+    <dependencies>
+        <!-- Spring Cloud 版本 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Spring Cloud Alibaba 版本 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+            <version>${alibaba-cloud.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>${redisson.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>${rocketmq.version}</version>
+         </dependency>
+          <dependency>
+  <groupId>com.baomidou</groupId>
+  <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                  <version>${mybatis.plus.version}</version>
+</dependency>
+        <!-- 动态数据源 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+            <version>${dynamic.datasource.version}</version>
+        </dependency>
+                <!-- MySQL驱动 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+       <dependency>
+        <groupId>com.caucho</groupId>
+        <artifactId>hessian</artifactId>
+        <version>${hessian.version}</version>
+    </dependency>
+     </dependencies>
+    </dependencyManagement>
+     <!-- 全局通用依赖 -->
+    <dependencies>
+        <!-- Lombok 简化代码，所有子工程通用 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+    <modules>
+    	<module>seckill-service</module>
+    	<module>product-service</module>
+    	<module>order-service</module>
+    	<module>nacos-service</module>
+    	<module>inventory-service</module>
+    	<module>account-service</module>
+    	<module>point-service</module>
+    </modules>
+</project>
