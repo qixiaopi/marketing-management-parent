@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: product-service
+  profiles:
+    active: dev
+  config:
+    import: nacos:product-service-dev.yml
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        group: DEV_GROUP
+        namespace: dev
+      discovery:
+        server-addr: localhost:8848
+        namespace: dev
+

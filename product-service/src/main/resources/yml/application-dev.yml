@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: product-service
+
+server:
+  port: 8084
+
+# RocketMQ 配置
+rocketmq:
+  name-server: 127.0.0.1:9876
+
+# Redisson 配置
+redisson:
+  cluster:
+    nodes:
+      - redis://127.0.0.1:7001
+      - redis://127.0.0.1:7002
+      - redis://127.0.0.1:7003
+      - redis://127.0.0.1:7004
+      - redis://127.0.0.1:7005
+      - redis://127.0.0.1:7006
+    scan-interval: 2000
+    connect-timeout: 3000
+    timeout: 3000
+    retry-attempts: 5
+    retry-interval: 1000
+    master-connection-pool-size: 64
+    slave-connection-pool-size: 64
+    idle-connection-timeout: 10000
+    ping-connection-interval: 30000
+# 秒杀配置
+seckill:
+ # 分布式锁配置
+ lock:
+  wait:
+   time: 2
