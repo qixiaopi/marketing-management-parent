@@ -1,0 +1,48 @@
+server:
+  port: 8085
+
+spring:
+  datasource:
+    dynamic:
+      primary: master0
+      strict: false
+      datasource:
+        master0:
+          url: jdbc:mysql://localhost:3306/point_db_0?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+          username: root
+          password:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        slave0-1:
+          url: jdbc:mysql://localhost:3307/point_db_0?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+          username: root
+          password:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        master1:
+          url: jdbc:mysql://localhost:3308/point_db_1?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+          username: root
+          password:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        slave1-1:
+          url: jdbc:mysql://localhost:3309/point_db_1?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+          username: root
+          password:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+
+redisson:
+  cluster:
+    nodes:
+      - redis://127.0.0.1:7001
+      - redis://127.0.0.1:7002
+      - redis://127.0.0.1:7003
+      - redis://127.0.0.1:7004
+      - redis://127.0.0.1:7005
+      - redis://127.0.0.1:7006
+    scan-interval: 2000
+    connect-timeout: 3000
+    timeout: 3000
+    retry-attempts: 5
+    retry-interval: 1000
+    master-connection-pool-size: 64
+    slave-connection-pool-size: 64
+    idle-connection-timeout: 10000
+    ping-connection-interval: 30000
