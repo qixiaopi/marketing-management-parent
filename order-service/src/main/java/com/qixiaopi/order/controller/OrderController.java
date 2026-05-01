@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.qixiaopi.order.dto.ResultDTO;
 import com.qixiaopi.order.entity.OrderCreateMessage;
 import com.qixiaopi.order.service.OrderService;
 
@@ -15,13 +16,14 @@ public class OrderController {
     private OrderService orderService;
     
     @PostMapping("/create")
-    public String createOrder(String orderId, Long goodsId, Integer num, String userId, long amount) {
+    public ResultDTO<String> createOrder(String orderId, Long goodsId, Integer num, String userId, long amount) {
     	OrderCreateMessage orderMessage = new OrderCreateMessage();
         orderMessage.setOrderId(orderId);
         orderMessage.setSkuId(goodsId);
         orderMessage.setNum(num);
         orderMessage.setUserId(userId);
         orderMessage.setOrderAmount(amount);
-        return orderService.createOrder(orderMessage);
+        String result = orderService.createOrder(orderMessage);
+        return ResultDTO.success(result);
     }
 }

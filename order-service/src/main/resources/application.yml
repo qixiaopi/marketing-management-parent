@@ -14,32 +14,5 @@ spring:
         namespace: dev
       discovery:
         server-addr: localhost:8848
+        group: DEV_GROUP
         namespace: dev
-
-# Seata核心配置
-seata:
-  service:
-    vgroup-mapping:
-      # 事务分组映射到集群名称
-      core-order-service-tx-group: default
-    # 移除 grouplist 配置，完全依赖 Nacos 服务发现
-  # 事务分组，必须和vgroup-mapping对应
-  tx-service-group: core-order-service-tx-group
-  # AT模式配置
-  config:
-    type: nacos
-    nacos:
-      server-addr: 127.0.0.1:8848
-      group: SEATA_GROUP
-      namespace: seata
-      username: nacos
-      password: nacos
-  registry:
-    type: nacos
-    nacos:
-      server-addr: 127.0.0.1:8848
-      group: SEATA_GROUP
-      namespace: seata
-      cluster: default
-      username: nacos
-      password: nacos

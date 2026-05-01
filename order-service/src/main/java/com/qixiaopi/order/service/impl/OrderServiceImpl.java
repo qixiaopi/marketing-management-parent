@@ -11,6 +11,7 @@ import com.qixiaopi.order.config.DynamicTableNameContext;
 import com.qixiaopi.order.dto.ResultDTO;
 import com.qixiaopi.order.entity.Order;
 import com.qixiaopi.order.entity.OrderCreateMessage;
+import com.qixiaopi.order.exception.BusinessException;
 import com.qixiaopi.order.feign.PayFeignClient;
 import com.qixiaopi.order.feign.PointFeignClient;
 import com.qixiaopi.order.feign.StockFeignClient;
@@ -38,10 +39,10 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private PointFeignClient pointFeignClient;
     // 核心注解：开启分布式事务，AT模式无侵入业务代码
-    @GlobalTransactional(rollbackFor = Exception.class)
+    @GlobalTransactional(rollbackFor = Exception.class, timeoutMills = 60000)
     @Override
 	public String createOrder(OrderCreateMessage orderMessage) {
-    	
+     
             String xid = RootContext.getXID();
             log.info("分布式事务开启，XID：{}", xid);
             Long goodsId = orderMessage.getSkuId();
@@ -49,32 +50,44 @@ public class OrderServiceImpl implements OrderService {
             String orderId = orderMessage.getOrderId();
             String userId = orderMessage.getUserId();
             Long orderAmount = orderMessage.getOrderAmount();
+            
             // 1. 远程调用库存服务，扣减库存（分支事务1）
+            log.info("调用库存服务前，当前XID：{}", xid);
+            // 手动设置XID到请求头
+            System.setProperty("seata.xid", xid);
+            log.info("手动设置XID到系统属性：{}", xid);
             ResultDTO<Boolean> stockResult = stockFeignClient.deductStock(goodsId, num, orderId);
             if (!stockResult.isSuccess()) {
-                throw new RuntimeException("库存扣减失败");
+                log.error("库存扣减失败，XID：{}", xid);
+                throw new BusinessException("库存扣减失败");
             }
+            
             // 2. 本地事务：创建订单（分支事务2）
-            createOrder(orderId, goodsId, num, userId, orderAmount);
-            log.info("订单创建成功，订单号：{}", orderId);
-
+            String orderResult = createOrder(orderId, goodsId, num, userId, orderAmount);
+            if (!orderResult.startsWith("订单创建成功")) {
+                log.error("订单创建失败，XID：{}", xid);
+                throw new BusinessException(orderResult);
+            }
+            log.info("订单创建成功，订单号：{}，XID：{}", orderId, xid);
+            
             // 3. 远程调用支付服务，扣减余额（分支事务3）
-            String payResult = payFeignClient.deductBalance(userId, orderAmount);
-            if (!"success".equals(payResult)) {
-                // 抛出异常，触发全局回滚，所有分支事务全部回滚
-                throw new RuntimeException("支付扣减失败");
+            ResultDTO<String> payResult = payFeignClient.deductBalance(userId, orderAmount, orderId);
+            if (!payResult.isSuccess()) {
+                log.error("支付扣减失败，XID：{}", xid);
+                throw new BusinessException("支付扣减失败：" + payResult.getMessage());
             }
 
             Long userIdLong = Long.valueOf(userId);
             
             // 4. 远程调用积分服务，发放积分（分支事务4）
-            ResultDTO<Boolean> pointResult = pointFeignClient.addPoint(userIdLong, orderAmount.intValue());
+            ResultDTO<String> pointResult = pointFeignClient.addPoint(userIdLong, orderAmount, orderId, null);
             if (!pointResult.isSuccess()) {
-                throw new RuntimeException("积分发放失败");
+                log.error("积分发放失败，XID：{}", xid);
+                throw new BusinessException("积分发放失败");
             }
 
             log.info("分布式事务执行成功，XID：{}", xid);
-		return "下单成功";
+            return "下单成功";
 	}
 	
 
@@ -108,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         } catch (Exception e) {
             log.error("订单创建失败，订单号：{}", orderId, e);
-            return "订单创建失败：" + e.getMessage();
+            return "订单创建失败";
         } finally {
             // 清理线程上下文
             DynamicTableNameContext.clear();
@@ -117,33 +130,23 @@ public class OrderServiceImpl implements OrderService {
     
     @DS("master0")
     public String insertOrderInMaster0(Order order) {
-        try {
-            // 计算动态表名用于日志打印
-            String tableName = "t_order_" + (order.getUserId() % 3);
-            // 使用MyBatis Plus的动态表名功能，不再需要手动指定表名
-            orderMapper.insert(order);
-            log.info("订单创建成功，订单号：{}，数据源：{}，表名：{}", order.getOrderNo(), "master0", tableName);
-            log.info("【订单服务】订单创建成功，订单号：{}", order.getOrderNo());
-            return "订单创建成功，订单号：" + order.getOrderNo();
-        } catch (Exception e) {
-            log.error("订单创建失败，订单号：{}", order.getOrderNo(), e);
-            return "订单创建失败：" + e.getMessage();
-        }
+        // 计算动态表名用于日志打印
+        String tableName = "t_order_" + (order.getUserId() % 3);
+        // 使用MyBatis Plus的动态表名功能，不再需要手动指定表名
+        orderMapper.insert(order);
+        log.info("订单创建成功，订单号：{}，数据源：{}，表名：{}", order.getOrderNo(), "master0", tableName);
+        log.info("【订单服务】订单创建成功，订单号：{}", order.getOrderNo());
+        return "订单创建成功，订单号：" + order.getOrderNo();
     }
     
     @DS("master1")
     public String insertOrderInMaster1(Order order) {
-        try {
-            // 计算动态表名用于日志打印
-            String tableName = "t_order_" + (order.getUserId() % 3);
-            // 使用MyBatis Plus的动态表名功能，不再需要手动指定表名
-            orderMapper.insert(order);
-            log.info("订单创建成功，订单号：{}，数据源：{}，表名：{}", order.getOrderNo(), "master1", tableName);
-            log.info("【订单服务】订单创建成功，订单号：{}", order.getOrderNo());
-            return "订单创建成功，订单号：" + order.getOrderNo();
-        } catch (Exception e) {
-            log.error("订单创建失败，订单号：{}", order.getOrderNo(), e);
-            return "订单创建失败：" + e.getMessage();
-        }
+        // 计算动态表名用于日志打印
+        String tableName = "t_order_" + (order.getUserId() % 3);
+        // 使用MyBatis Plus的动态表名功能，不再需要手动指定表名
+        orderMapper.insert(order);
+        log.info("订单创建成功，订单号：{}，数据源：{}，表名：{}", order.getOrderNo(), "master1", tableName);
+        log.info("【订单服务】订单创建成功，订单号：{}", order.getOrderNo());
+        return "订单创建成功，订单号：" + order.getOrderNo();
     }
 }

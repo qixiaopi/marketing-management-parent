@@ -1,34 +1,93 @@
 server:
   port: 8082
+
 spring:
+  application:
+    name: order-service
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true  # 启用 Feign 断路器，关键配置
+      client:
+        config:
+          default:
+            connectTimeout: 10000  # 连接超时时间（毫秒）
+            readTimeout: 30000     # 读取超时时间（毫秒）
+      httpclient:
+        enabled: true  # 启用 Apache HttpClient
+        max-connections: 200  # 最大连接数
+        max-connections-per-route: 50  # 每个路由的最大连接数
   datasource:
     dynamic:
       primary: master0
       strict: false
+      seata: true  # 启用 Seata 代理，关键配置
       datasource:
         master0:
           url: jdbc:mysql://localhost:3306/order_db_0?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
           username: root
-          password: 
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
         slave0-1:
           url: jdbc:mysql://localhost:3307/order_db_0?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
           username: root
-          password: 
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
         master1:
           url: jdbc:mysql://localhost:3308/order_db_1?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
           username: root
-          password: 
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
         slave1-1:
           url: jdbc:mysql://localhost:3309/order_db_1?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
           username: root
-          password: 
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
+
+# Resilience4j 配置
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 35s  # 超时时间，应大于 Feign 读取超时时间
+        cancel-running-future: false  # 超时后是否取消运行中的任务
+    instances:
+      default:
+        base-config: default
 
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.qixiaopi.order.entity
   configuration:
     map-underscore-to-camel-case: true
+
+# Seata核心配置
+seata:
+  service:
+    vgroup-mapping:
+      # 事务分组映射到集群名称
+      core-order-service-tx-group: default
+    # 移除 grouplist 配置，完全依赖 Nacos 服务发现
+  # 事务分组，必须和vgroup-mapping对应
+  tx-service-group: core-order-service-tx-group
+  # 禁用自动数据源代理，因为动态数据源已启用 seata 代理
+  enable-auto-data-source-proxy: false
+  # AT模式配置
+  data-source-proxy-mode: AT
+  config:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: seata
+      username: nacos
+      password: nacos
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: seata
+      cluster: default
+      username: nacos
+      password: nacos
