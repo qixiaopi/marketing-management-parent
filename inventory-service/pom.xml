@@ -33,5 +33,14 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+                <!-- Seata Spring Boot Starter -->
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+        </dependency>
+               <dependency>
+        <groupId>com.caucho</groupId>
+        <artifactId>hessian</artifactId>
+    </dependency>
   </dependencies>
 </project>

@@ -13,3 +13,34 @@ mybatis-plus:
   type-aliases-package: com.qixiaopi.inventory.entity
   configuration:
     map-underscore-to-camel-case: true
+
+# Seata核心配置
+seata:
+  service:
+    vgroup-mapping:
+      # 事务分组映射到集群名称
+      core-order-service-tx-group: default
+    # 移除 grouplist 配置，完全依赖 Nacos 服务发现
+  # 事务分组，必须和vgroup-mapping对应
+  tx-service-group: core-order-service-tx-group
+  # 启用自动数据源代理
+  enable-auto-data-source-proxy: true
+  # AT模式配置
+  data-source-proxy-mode: AT
+  config:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: seata
+      username: nacos
+      password: nacos
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: seata
+      cluster: default
+      username: nacos
+      password: nacos

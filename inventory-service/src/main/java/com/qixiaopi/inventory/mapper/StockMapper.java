@@ -9,11 +9,10 @@ import org.apache.ibatis.annotations.Update;
 public interface StockMapper extends BaseMapper<Stock> {
     
     /**
-     * 使用行锁查询库存（FOR UPDATE）
-     * 确保并发环境下读取的库存数据准确
+     * 查询库存
      */
-    @Select("SELECT * FROM t_stock WHERE sku_id = #{skuId} FOR UPDATE")
-    Stock selectByIdForUpdate(@Param("skuId") Long skuId);
+    @Select("SELECT * FROM t_stock WHERE sku_id = #{skuId} FOR UPDATE ")
+    Stock selectById(@Param("skuId") Long skuId);
     
     @Update("UPDATE t_stock SET available_stock = available_stock - #{num}, version = version + 1 WHERE sku_id = #{skuId} AND available_stock >= #{num}")
     int deductStock(@Param("skuId") Long skuId, @Param("num") Integer num);
