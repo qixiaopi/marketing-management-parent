@@ -1,0 +1,27 @@
+// TypeScript 测试配置文件
+// 专门用于 Vitest 测试代码的类型检查
+// 继承应用配置，但针对测试环境做调整
+
+{
+  // 继承应用配置，保持与应用代码一致的类型检查
+  "extends": "./tsconfig.app.json",
+
+  // 覆盖配置：只包含测试文件，并清除排除项
+  // 测试中导入的应用代码会通过模块解析自动包含
+  "include": ["src/**/__tests__/*", "env.d.ts"],  // 包含测试文件
+  "exclude": [],                                 // 不排除任何文件
+
+  "compilerOptions": {
+    // Vitest 运行环境与应用代码不同
+    // 相应调整 lib 和 types
+    
+    "lib": [],                      // 清空标准库（由 Vitest 提供）
+    
+    "types": ["node", "jsdom"],     // 包含 Node.js 和 jsdom（浏览器模拟）类型
+    
+
+    // `vue-tsc --build` 会生成 .tsbuildinfo 文件用于增量类型检查
+    // 指定位置以避免在根目录生成
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo"
+  }
+}

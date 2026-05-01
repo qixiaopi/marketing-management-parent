@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML5 特性展示</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+      }
+
+      section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      h2 {
+        color: #333;
+      }
+
+      .feature {
+        margin: 10px 0;
+      }
+
+      video,
+      audio {
+        margin: 10px 0;
+      }
+
+      canvas {
+        border: 1px solid #ccc;
+      }
+
+      form {
+        margin: 10px 0;
+      }
+
+      input {
+        margin: 5px;
+        padding: 5px;
+      }
+
+      .success {
+        border-color: #4caf50;
+      }
+
+      .error {
+        border-color: #f44336;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 1. 语义化标签 -->
+    <header>
+      <h1>HTML5 核心特性展示</h1>
+      <nav>
+        <ul>
+          <li><a href="#semantic">语义化标签</a></li>
+          <li><a href="#multimedia">多媒体支持</a></li>
+          <li><a href="#canvas">Canvas 绘图</a></li>
+          <li><a href="#form">增强表单</a></li>
+          <li><a href="#storage">本地存储</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 2. 语义化标签示例 -->
+      <section id="semantic">
+        <h2>1. 语义化标签</h2>
+        <article>
+          <h3>文章标题</h3>
+          <p>HTML5 提供了丰富的语义化标签，使代码更具可读性和SEO友好。</p>
+        </article>
+        <aside>
+          <h3>侧边栏</h3>
+          <p>这是一个侧边栏内容。</p>
+        </aside>
+      </section>
+
+      <!-- 3. 多媒体支持 -->
+      <section id="multimedia">
+        <h2>2. 多媒体支持</h2>
+        <div class="feature">
+          <h3>视频播放</h3>
+          <video controls width="400">
+            <source src="sample.mp4" type="video/mp4" />
+            您的浏览器不支持视频播放。
+          </video>
+        </div>
+        <div class="feature">
+          <h3>音频播放</h3>
+          <audio controls>
+            <source src="sample.mp3" type="audio/mpeg" />
+            您的浏览器不支持音频播放。
+          </audio>
+        </div>
+      </section>
+
+      <!-- 4. Canvas 绘图 -->
+      <section id="canvas">
+        <h2>3. Canvas 绘图</h2>
+        <canvas id="myCanvas" width="400" height="200"></canvas>
+        <script>
+          const canvas = document.getElementById('myCanvas')
+          const ctx = canvas.getContext('2d')
+
+          // 绘制矩形
+          ctx.fillStyle = '#4CAF50'
+          ctx.fillRect(50, 50, 100, 100)
+
+          // 绘制圆形
+          ctx.beginPath()
+          ctx.arc(250, 100, 50, 0, 2 * Math.PI)
+          ctx.strokeStyle = '#2196F3'
+          ctx.lineWidth = 3
+          ctx.stroke()
+
+          // 绘制文本
+          ctx.font = '20px Arial'
+          ctx.fillStyle = '#333'
+          ctx.fillText('HTML5 Canvas', 150, 30)
+        </script>
+      </section>
+
+      <!-- 5. 增强表单 -->
+      <section id="form">
+        <h2>4. 增强表单</h2>
+        <form>
+          <div class="feature">
+            <label>电子邮件：</label>
+            <input type="email" required placeholder="请输入邮箱" />
+          </div>
+          <div class="feature">
+            <label>手机号码：</label>
+            <input type="tel" pattern="[0-9]{11}" placeholder="请输入11位手机号" />
+          </div>
+          <div class="feature">
+            <label>日期选择：</label>
+            <input type="date" />
+          </div>
+          <div class="feature">
+            <label>滑块：</label>
+            <input type="range" min="0" max="100" value="50" />
+          </div>
+          <div class="feature">
+            <button type="submit">提交</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 6. 本地存储 -->
+      <section id="storage">
+        <h2>5. 本地存储</h2>
+        <div class="feature">
+          <label>存储数据：</label>
+          <input type="text" id="storageInput" placeholder="输入要存储的数据" />
+          <button onclick="saveData()">保存</button>
+          <button onclick="loadData()">读取</button>
+          <p id="storageResult"></p>
+        </div>
+        <script>
+          function saveData() {
+            const input = document.getElementById('storageInput')
+            const data = input.value
+            localStorage.setItem('userData', data)
+            document.getElementById('storageResult').textContent = '数据已保存！'
+          }
+
+          function loadData() {
+            const data = localStorage.getItem('userData')
+            document.getElementById('storageResult').textContent = '存储的数据：' + (data || '无数据')
+          }
+        </script>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 HTML5 特性展示</p>
+    </footer>
+  </body>
+</html>
