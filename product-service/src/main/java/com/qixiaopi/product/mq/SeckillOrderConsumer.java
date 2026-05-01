@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.qixiaopi.product.dto.SeckillOrderMessage;
 import com.qixiaopi.product.feign.OrderServiceFeign;
+import com.qixiaopi.product.dto.ResultDTO;
 import com.qixiaopi.product.utils.StockUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -204,23 +205,13 @@ public class SeckillOrderConsumer implements RocketMQListener<SeckillOrderMessag
 
 
         try {
-            log.info("库存扣减成功，订单号：{}，商品ID：{}，数量：{}", orderId, goodsId, num);
-
-
-            log.info("订单创建成功，订单号：{}", orderId);
-
-  
-            log.info("余额扣减成功，订单号：{}，用户ID：{}", orderId, userId);
-
-      
-            
-            String orderResult = orderService.createOrder(
+            ResultDTO<String> orderResult = orderService.createOrder(
                     orderId,
                     goodsId,
                     num,
                     userId.toString(),
                     message.getAmount().longValue());
-            log.info("订单服务调用结果：{}", orderResult);
+            log.info("订单服务调用结果：{}，消息：{}", orderResult.isSuccess(), orderResult.getMessage());
 
         } catch (Exception e) {
             log.error("订单处理异常，开始回滚，订单号：{}，异常：{}", orderId, e.getMessage());

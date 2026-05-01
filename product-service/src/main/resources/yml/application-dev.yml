@@ -3,7 +3,7 @@ spring:
     name: product-service
 
 server:
-  port: 8084
+  port: 8081
 
 # RocketMQ 配置
 rocketmq:
@@ -19,15 +19,15 @@ redisson:
       - redis://127.0.0.1:7004
       - redis://127.0.0.1:7005
       - redis://127.0.0.1:7006
-    scan-interval: 2000
-    connect-timeout: 3000
-    timeout: 3000
-    retry-attempts: 5
-    retry-interval: 1000
+    scan-interval: 5000
+    connect-timeout: 5000
+    timeout: 5000
+    retry-attempts: 10
+    retry-interval: 2000
     master-connection-pool-size: 64
     slave-connection-pool-size: 64
-    idle-connection-timeout: 10000
-    ping-connection-interval: 30000
+    idle-connection-timeout: 30000
+    ping-connection-interval: 60000
 # 秒杀配置
 seckill:
  # 分布式锁配置

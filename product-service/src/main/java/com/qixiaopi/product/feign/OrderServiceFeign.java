@@ -4,6 +4,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.qixiaopi.product.dto.ResultDTO;
+
 /**
  * 订单服务 Feign 客户端
  */
@@ -20,7 +22,7 @@ public interface OrderServiceFeign {
      * @return 创建结果
      */
     @PostMapping("/order/create")
-    String createOrder(
+    ResultDTO<String> createOrder(
             @RequestParam("orderId") String orderId,
             @RequestParam("goodsId") Long goodsId,
             @RequestParam("num") Integer num,

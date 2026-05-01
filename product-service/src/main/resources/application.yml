@@ -14,5 +14,6 @@ spring:
         namespace: dev
       discovery:
         server-addr: localhost:8848
+        group: DEV_GROUP
         namespace: dev
 
