@@ -1,0 +1,30 @@
+server:
+    port: 8088
+
+spring:
+  elasticsearch:
+    uris: http://127.0.0.1:9200,http://127.0.0.1:9201,http://127.0.0.1:9202
+    username:
+    password:
+    connection-timeout: 5000
+    socket-timeout: 30000
+    retry-delay-ms: 1000
+    max-retry-delay-ms: 60000
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.qixiaopi.canal: debug
+
+# Canal 配置
+canal:
+  server:
+    destinations: product_db_0,product_db_1
+    username:
+    password:
+  zkServers: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183
+  filter:
+    tables: product_db_0.t_product,product_db_1.t_product
+  batch:
+    size: 1000
