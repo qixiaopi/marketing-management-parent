@@ -80,3 +80,40 @@ INSERT INTO account_db_1.t_account  (`user_id`, `balance`, `version`) VALUES
 ('101', 100000, 0),   -- 1000元
 ('103', 50000, 0),    -- 500元
 ('105', 200000, 0);   -- 2000元
+
+
+
+-- ===========================================================
+-- account_db_0
+-- 用于存储 Seata AT 模式的回滚日志
+-- ===========================================================
+CREATE TABLE account_db_0.undo_log ( 
+  `id` bigint NOT NULL AUTO_INCREMENT,  -- 主键，自增
+  `branch_id` bigint NOT NULL,  -- 分支事务ID，用于标识分布式事务中的分支
+  `xid` varchar(100) NOT NULL,  -- 全局事务ID，唯一标识一个分布式事务
+  `context` varchar(128) NOT NULL,  -- 上下文信息，存储额外的业务数据
+  `rollback_info` longblob NOT NULL,  -- 回滚信息，存储数据修改前的状态
+  `log_status` int NOT NULL,  -- 日志状态：0-正常，1-已提交，2-已回滚
+  `log_created` datetime NOT NULL,  -- 日志创建时间
+  `log_modified` datetime NOT NULL,  -- 日志修改时间
+  PRIMARY KEY (`id`),  -- 主键索引
+  UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)  -- 唯一索引，确保事务和分支的唯一性
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;  -- 使用InnoDB引擎，支持事务，使用utf8mb4字符集
+
+
+-- ===========================================================
+-- account_db_1
+-- 用于存储 Seata AT 模式的回滚日志
+-- ===========================================================
+CREATE TABLE account_db_1.undo_log ( 
+  `id` bigint NOT NULL AUTO_INCREMENT,  -- 主键，自增
+  `branch_id` bigint NOT NULL,  -- 分支事务ID，用于标识分布式事务中的分支
+  `xid` varchar(100) NOT NULL,  -- 全局事务ID，唯一标识一个分布式事务
+  `context` varchar(128) NOT NULL,  -- 上下文信息，存储额外的业务数据
+  `rollback_info` longblob NOT NULL,  -- 回滚信息，存储数据修改前的状态
+  `log_status` int NOT NULL,  -- 日志状态：0-正常，1-已提交，2-已回滚
+  `log_created` datetime NOT NULL,  -- 日志创建时间
+  `log_modified` datetime NOT NULL,  -- 日志修改时间
+  PRIMARY KEY (`id`),  -- 主键索引
+  UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)  -- 唯一索引，确保事务和分支的唯一性
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;  -- 使用InnoDB引擎，支持事务，使用utf8mb4字符集

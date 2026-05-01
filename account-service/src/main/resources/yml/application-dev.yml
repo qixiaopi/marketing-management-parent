@@ -1,11 +1,12 @@
 server:
-  port: 8082
+  port: 8084
 
 spring:
   datasource:
     dynamic:
       primary: master0
       strict: false
+      seata: true  # 启用 Seata 代理，关键配置
       datasource:
         master0:
           url: jdbc:mysql://localhost:3306/account_db_0?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
@@ -37,12 +38,43 @@ redisson:
       - redis://127.0.0.1:7004
       - redis://127.0.0.1:7005
       - redis://127.0.0.1:7006
-    scan-interval: 2000
-    connect-timeout: 3000
-    timeout: 3000
-    retry-attempts: 5
-    retry-interval: 1000
+    scan-interval: 5000
+    connect-timeout: 5000
+    timeout: 5000
+    retry-attempts: 10
+    retry-interval: 2000
     master-connection-pool-size: 64
     slave-connection-pool-size: 64
-    idle-connection-timeout: 10000
-    ping-connection-interval: 30000
+    idle-connection-timeout: 30000
+    ping-connection-interval: 60000
+
+# Seata核心配置
+seata:
+  service:
+    vgroup-mapping:
+      # 事务分组映射到集群名称
+      core-order-service-tx-group: default
+    # 移除 grouplist 配置，完全依赖 Nacos 服务发现
+  # 事务分组，必须和vgroup-mapping对应
+  tx-service-group: core-order-service-tx-group
+  # 禁用自动数据源代理，因为动态数据源已启用 seata 代理
+  enable-auto-data-source-proxy: false
+  # AT模式配置
+  data-source-proxy-mode: AT
+  config:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: seata
+      username: nacos
+      password: nacos
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: seata
+      cluster: default
+      username: nacos
+      password: nacos
