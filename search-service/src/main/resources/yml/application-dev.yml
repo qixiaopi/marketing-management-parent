@@ -1,0 +1,19 @@
+server:
+  port: 8086
+
+spring:
+  elasticsearch:
+    uris: http://127.0.0.1:9200,http://127.0.0.1:9201,http://127.0.0.1:9202
+    username:
+    password:
+    connection-timeout: 5000
+    socket-timeout: 30000
+
+elasticsearch:
+  index:
+    number_of_shards: 3
+    number_of_replicas: 1
+
+logging:
+  level:
+    tracer: TRACE
